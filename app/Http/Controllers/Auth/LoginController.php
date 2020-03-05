@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Socialite;
+use App\User;
+use Auth;
 
 class LoginController extends Controller
 {
@@ -36,5 +39,49 @@ class LoginController extends Controller
     public function __construct()
     {
         $this->middleware('guest')->except('logout');
+    }
+
+    public function logout()
+    {
+        Auth::logout();
+        return redirect('/');
+    }
+
+    /**
+     * Redirect the user to the Social Network authentication page.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function redirectToProvider($social)
+    {
+        return Socialite::driver($social)->redirect();
+    }
+
+    /**
+     * Obtain the user information from a Social Network.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function handleProviderCallback($social)
+    {
+        $user = Socialite::driver($social)->user();
+
+        $existingUser = User::whereEmail($user->getEmail())->first();
+
+        if ($existingUser){
+            auth()->login($existingUser);
+
+            return redirect($this->redirectPath());
+        }
+
+        $newUser = User::create([
+            'name' => $user->getName(),
+            'email' => $user->getEmail(),
+            'password' => bcrypt('6gyhweb32'),
+        ]);
+
+        auth()->login($newUser);
+
+        return redirect($this->redirectPath());
     }
 }

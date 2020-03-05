@@ -19,8 +19,11 @@ Route::get('/', 'Guest\GuestController@index')->name('main');
 
 Route::prefix('/')->group(function() {
 	Route::get('/home', 'User\HomeController@index')->name('home');
-	Route::post('/users/logout', 'Auth\LoginController@userLogout')->name('user.logout');
+	Route::post('/users/logout', 'Auth\LoginController@logout')->name('user.logout');
 });
+
+Route::get('/login/{social}','Auth\LoginController@redirectToProvider')->where('social','twitter|facebook|linkedin|google|github|bitbucket');
+Route::get('/login/{social}/callback','Auth\LoginController@handleProviderCallback')->where('social','twitter|facebook|linkedin|google|github|bitbucket');
 
 Route::prefix('admin')->group(function() {
 	Route::get('/', 'Admin\HomeController@index')->name('admin.dashboard');

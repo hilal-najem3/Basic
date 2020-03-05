@@ -78,10 +78,21 @@ class LoginController extends Controller
             'name' => $user->getName(),
             'email' => $user->getEmail(),
             'password' => bcrypt('6gyhweb32'),
+            'email_verified_at' =>$this->freshTimestamp(),
         ]);
 
         auth()->login($newUser);
 
         return redirect($this->redirectPath());
+    }
+
+    /**
+     * Get a fresh timestamp for the model.
+     *
+     * @return \Illuminate\Support\Carbon
+     */
+    public function freshTimestamp()
+    {
+        return Date::now();
     }
 }

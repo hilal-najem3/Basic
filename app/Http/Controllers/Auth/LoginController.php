@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Socialite;
 use App\User;
 use Auth;
+use Illuminate\Support\Facades\Date;
 
 class LoginController extends Controller
 {
